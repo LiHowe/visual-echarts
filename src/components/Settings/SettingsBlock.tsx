@@ -1,15 +1,13 @@
 import {
   defineComponent,
-  onMounted,
   reactive,
   watch
 } from 'vue'
 import {
   COMPONENT_TYPE
 } from '../../echarts'
-import {
-  ElSelect
-} from 'element-plus'
+
+import './styles/settings.css'
 
 import { nanoid } from 'nanoid'
 
@@ -75,8 +73,8 @@ export default defineComponent({
       const uid = nanoid(4)
       return (
         <div class="setting-item">
-          <label for={uid}>{ data.label }</label>
-          <el-input-number size="mini" modelValue={data} id={uid} onChange={val => {
+          <label class="setting-item__label" for={uid}>{ data.label }</label>
+          <el-input-number size="mini" modelValue={state.clonedData[key]} id={uid} onChange={val => {
             emit({ key, value: data.dataType(val) })
           }}/>
         </div>
@@ -86,9 +84,9 @@ export default defineComponent({
     function genSelect (data, key) {
       const uid = nanoid(4)
       return (
-        <div>
-          <label for={uid}>{ data.label }</label>
-          <el-select size="mini" modelValue={props.obj[key]} onChange={val => {
+        <div class="setting-item">
+          <label class="setting-item__label" for={uid}>{ data.label }</label>
+          <el-select size="mini" modelValue={state.clonedData[key]} onChange={val => {
             emit({ key, value: data.dataType(val)})
           }}>
             { genOption(data.options) }
@@ -104,19 +102,42 @@ export default defineComponent({
     }
 
     function genInput (data, key) {
-
+      return (
+        <div class="setting-item">
+          <p class="setting-item__label">{ data.label }</p>
+          <el-input type="text" size="mini" modelValue={state.clonedData[key]} onInput={(val) => {
+            emit({ key, value: data.dataType(val)})
+          }} />
+        </div>
+      )
     }
 
     function genCheckbox (data, key) {
-
+      const uid = nanoid(4)
+      return (
+        <div class="setting-item inline">
+          <label class="setting-item__label" for={uid}>{ data.label }</label>
+          <el-switch id={uid} modelValue={state.clonedData[key]} onChange={val => emit({ key, value: data.dataType(val)})} />
+        </div>
+      )
     }
 
     function genColorPicker (data, key) {
-
+      return (
+        <div class="setting-item">
+          <p class="setting-item__label">{ data.label }</p>
+          <el-color-picker size="mini" modelValue={state.clonedData[key]} onChange={val => emit({ key, value: data.dataType(val)})} />
+        </div>
+      )
     }
 
     function genSlider (data, key) {
-
+      return (
+        <div class="setting-item">
+          <p class="setting-item__label">{ data.label }</p>
+          <el-slider modelValue={state.clonedData[key]} onChange={val => emit({ key, value: data.dataType(val)})} />
+        </div>
+      )
     }
 
     const c = props.config

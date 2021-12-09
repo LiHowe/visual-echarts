@@ -1,6 +1,17 @@
 .el-collapse {
   --el-collapse-header-height: 30px;
+  box-shadow: 0 2px 4px #cbcbcb;
+}
+.el-collapse + .el-collapse {
+  margin-top: 10px;
+}
+.el-collapse .el-collapse {
+  box-shadow: none;
 }
 .el-collapse .el-collapse-item__header {
   padding-left: 5px;
+}
+
+.el-collapse-item__content .el-collapse {
+  padding-left: 10px;
 }

@@ -1,0 +1,25 @@
+.setting-item {
+  font-size: 12px;
+  padding: 5px;
+}
+
+.setting-item .setting-item__label {
+  display: block;
+}
+
+.setting-item .el-input,
+.setting-item .el-input-number,
+.setting-item .el-select {
+  width: 100%;
+}
+
+.setting-item.inline {
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  padding: 5px;
+}
+
+.setting-item.inline .setting-item__label {
+  display: inline-block;
+}

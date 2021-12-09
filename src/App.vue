@@ -1,6 +1,6 @@
 <template>
  <el-container class="app-container">
-   <el-aside width="200px">
+   <el-aside width="250px">
      <Settings v-model="settings" class="aside-settings" />
    </el-aside>
    <el-container class="page-content">
