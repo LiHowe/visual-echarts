@@ -1,0 +1,6 @@
+.el-collapse {
+  --el-collapse-header-height: 30px;
+}
+.el-collapse .el-collapse-item__header {
+  padding-left: 5px;
+}
