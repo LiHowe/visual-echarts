@@ -45,7 +45,6 @@ export default defineComponent({
     )
 
     function emit({key, value}) {
-      debugger
       const originData = state.clonedData[key]
       // if object, merge
       if (typeof originData === 'object') {

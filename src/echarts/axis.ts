@@ -2,7 +2,7 @@ import {
   simplifyOptions,
 } from './utils'
 import {
-  baseCheckboxItem,
+  baseCheckboxItem, baseColorItem,
   baseInputItem,
   baseNumberItem,
   baseSelectItem
@@ -12,6 +12,10 @@ export function getBaseAxisOptionsX (detail = false) {
   const base = {
     ...getBaseAxisOptions(),
     // For xAxis custom attrs
+    position: baseSelectItem('坐标轴位置', 'bottom', [
+      ['顶部', 'top'],
+      ['底部', 'bottom'],
+    ]),
   }
   if (!detail) return simplifyOptions(base)
   return base
@@ -19,8 +23,12 @@ export function getBaseAxisOptionsX (detail = false) {
 
 export function getBaseAxisOptionsY (detail = false) {
   const base = {
-    ...getBaseAxisOptions()
+    ...getBaseAxisOptions(),
     // For yAxis custom attrs
+    position: baseSelectItem('坐标轴位置', 'left', [
+      ['左侧', 'left'],
+      ['右侧', 'right'],
+    ]),
   }
   if (!detail) return simplifyOptions(base)
   return base
@@ -29,10 +37,6 @@ export function getBaseAxisOptionsY (detail = false) {
 function getBaseAxisOptions () {
   return {
     show: baseCheckboxItem('显示坐标轴'),
-    position: baseSelectItem('坐标轴位置', 'bottom', [
-      ['顶部', 'top'],
-      ['底部', 'bottom'],
-    ]),
     axisLine: {
       label: '轴线设置',
       children: {
@@ -40,7 +44,7 @@ function getBaseAxisOptions () {
         lineStyle: {
           label: '轴线样式设置',
           children: {
-            color: baseInputItem('轴线颜色', '#333')
+            color: baseColorItem('轴线颜色', '#333')
           }
         }
       }
@@ -54,7 +58,7 @@ function getBaseAxisOptions () {
         lineStyle: {
           label: '刻度样式设置',
           children: {
-            color: baseInputItem('刻度颜色', '#333'),
+            color: baseColorItem('刻度颜色', '#333'),
             width: baseNumberItem('刻度宽度', 1),
             type: baseSelectItem('刻度线类型', 'solid',[
               ['实线', 'solid'],
@@ -71,7 +75,7 @@ function getBaseAxisOptions () {
         show: baseCheckboxItem('显示标签'),
         rotate: baseNumberItem('标签旋转', 0, [0, 360]),
         margin: baseNumberItem('标签与轴线间距', 8),
-        color: baseInputItem('标签颜色', '#333'),
+        color: baseColorItem('标签颜色', '#333'),
         fontStyle: baseSelectItem('字体风格', 'normal', [
           ['标准', 'normal'],
           ['斜体', 'italic'],

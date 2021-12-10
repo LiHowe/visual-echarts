@@ -1,16 +1,18 @@
 <template>
- <el-container class="app-container">
-   <el-aside width="250px">
-     <Settings v-model="settings" class="aside-settings" />
-   </el-aside>
-   <el-container class="page-content">
-     <Chart :data="mockedData" :opts="settings"/>
-   </el-container>
- </el-container>
+  <div class="app-container">
+    <Settings v-model="settings" class="aside-settings" />
+    <div class="page-content">
+      <tool-bar :config="chartConfig" @changeConfig="({k, v}) => chartConfig[k] = v"/>
+      <Chart :data="mockedData" :opts="settings" :config="chartConfig"/>
+      <data-sheet :model-value="mockedData" @dataChange="changeData" />
+    </div>
+  </div>
 </template>
 <script setup>
 import Settings from './components/Settings'
-import Chart from './components/Chart.vue'
+import Chart from './components/Chart/index.vue'
+import ToolBar from './components/Chart/ToolBar.vue'
+import DataSheet from './components/Data/index.vue'
 import {
   getBaseLegendOptions,
   getBaseTitleOptions,
@@ -18,7 +20,8 @@ import {
   getBaseAxisOptionsX
 } from './echarts'
 import {
-  reactive
+  reactive,
+  ref
 } from 'vue'
 
 const settings = reactive({
@@ -27,7 +30,7 @@ const settings = reactive({
   xAxis: getBaseAxisOptionsX(),
   yAxis: getBaseAxisOptionsY()
 })
-const mockedData = reactive([
+const mockedData = ref([
   {
     year: '2010',
     q1: 100,
@@ -51,6 +54,15 @@ const mockedData = reactive([
   }
 ])
 
+const chartConfig = reactive({
+  showCode: false
+})
+
+function changeData(data) {
+  console.log('[APP] 数据改变,', data)
+  mockedData.value = data
+}
+
 </script>
 <style>
 html,
@@ -63,6 +75,9 @@ body {
 .app-container {
   width: 100vw;
   height: 100vh;
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: 250px auto;
 }
 .aside-settings {
   width: 100%;
@@ -78,6 +93,8 @@ body {
 }
 .page-content {
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 30px auto 30%;
 }
 </style>
