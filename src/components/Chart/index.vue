@@ -102,9 +102,28 @@ watch(
   }
 )
 
-function record () {
-  const chartCanvas = data.chartInstance.getDom().querySelector('canvas')
-  const stream = chartCanvas.captureStream(30)
+/**
+ * 预览方法
+ */
+function preview () {
+  const v = document.createElement('video')
+  v.height = 200
+  v.width = 320
+  v.autoplay = true
+  v.controls = true
+  data.chartInstance.getDom().appendChild(v)
+  return {
+    setStream: stream => {
+      v.srcObject = stream
+    }
+  }
+}
+
+/**
+ * 录制方法
+ * @param stream
+ */
+function record (stream) {
   const recorder = new MediaRecorder(stream)
   recorder.start()
   recorder.ondataavailable = e => {
@@ -113,12 +132,6 @@ function record () {
     a.href = URL.createObjectURL(e.data)
     a.click()
   }
-  const v = document.createElement('video')
-  v.srcObject = stream
-  v.height = 200
-  v.width = 320
-  v.autoplay = true
-  data.chartInstance.getDom().appendChild(v)
   data.chartInstance.on('finished', e => {
     if (recorder.state === 'inactive') return
     setTimeout(() => {
@@ -126,6 +139,12 @@ function record () {
     }, 1000)
   })
 }
+
+function getStreamFromCanvas (frameRate = 30) {
+  const chartCanvas = data.chartInstance.getDom().querySelector('canvas')
+  return chartCanvas.captureStream(frameRate)
+}
+
 
 onMounted(() => {
   data.chartInstance = echarts.init(ec.value)
@@ -143,9 +162,12 @@ onMounted(() => {
       source: props.data
     }
   })
+  const p = preview()
+  const stream = getStreamFromCanvas()
+  p.setStream(stream)
+  // 先录制,
+  // record(stream)
   data.chartInstance.setOption(props.opts)
-  data.chartInstance.resize()
-  record()
 })
 </script>
 
