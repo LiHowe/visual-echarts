@@ -93,7 +93,7 @@ export function baseSelectItem (
     options = options.map(genOptions)
   } else if (fOpt instanceof Array) {
     options = options.map(item => {
-      const [label, value] = item
+      const [label, value] = <string[]>item
       return genOptions(label, value)
     })
   }
@@ -106,7 +106,7 @@ export function baseSelectItem (
   }
 }
 
-export function baseColorItem (label: string, preset: string): BaseColorItem {
+export function baseColorItem (label: string, preset: string = ''): BaseColorItem {
   return {
     label,
     preset,
