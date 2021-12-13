@@ -3,7 +3,6 @@ import {
 } from './utils'
 import {
   baseCheckboxItem, baseColorItem,
-  baseInputItem,
   baseNumberItem,
   baseSelectItem
 } from './settingsGenerator'

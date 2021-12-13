@@ -5,13 +5,12 @@
 <script setup lang="ts">
 import {computed, onMounted, reactive, ref, watch} from 'vue'
 import * as echarts from 'echarts'
+import type { ECharts } from 'echarts'
 
 
 const ec = ref(null)
 
-const data = reactive({
-  chartInstance: {}
-})
+let chartInstance = reactive({}) as ECharts
 
 const props = defineProps({
   // 图表选项
@@ -41,7 +40,7 @@ const props = defineProps({
 watch(
   () => props.config.darkMode,
   (val: boolean) => {
-    data.chartInstance.setOption({
+    chartInstance.setOption({
       darkMode: val,
       backgroundColor: val ? '#100C2A' : 'transparent',
       color: val
@@ -75,7 +74,7 @@ watch(
 watch(
   () => props.config.showCode,
   (val) => {
-    const opts = data.chartInstance.getOption()
+    const opts = chartInstance.getOption()
     val && console.log(opts)
   }
 )
@@ -83,7 +82,7 @@ watch(
 watch(
   () => props.opts,
   val => {
-    data.chartInstance.setOption(val)
+    chartInstance.setOption(val)
   },
   {
     deep: true
@@ -94,7 +93,7 @@ watch(
   () => props.data,
   (val) => {
     console.log('[图表] 数据改变, 数据为', val)
-    data.chartInstance.setOption({
+    chartInstance.setOption({
       dataset: {
         source: val
       }
@@ -111,9 +110,9 @@ function preview () {
   v.width = 320
   v.autoplay = true
   v.controls = true
-  data.chartInstance.getDom().appendChild(v)
+  chartInstance.getDom().appendChild(v)
   return {
-    setStream: stream => {
+    setStream: (stream: MediaStream) => {
       v.srcObject = stream
     }
   }
@@ -132,7 +131,7 @@ function record (stream) {
     a.href = URL.createObjectURL(e.data)
     a.click()
   }
-  data.chartInstance.on('finished', e => {
+  chartInstance.on('finished', () => {
     if (recorder.state === 'inactive') return
     setTimeout(() => {
       recorder.stop()
@@ -141,15 +140,15 @@ function record (stream) {
 }
 
 function getStreamFromCanvas (frameRate = 30) {
-  const chartCanvas = data.chartInstance.getDom().querySelector('canvas')
+  const chartCanvas = chartInstance.getDom().querySelector('canvas')
   return chartCanvas.captureStream(frameRate)
 }
 
 
 onMounted(() => {
-  data.chartInstance = echarts.init(ec.value)
+  chartInstance = echarts.init(ec.value)
   const keys = Object.keys(props.data[0])
-  data.chartInstance.setOption({
+  chartInstance.setOption({
     xAxis: {
       type: 'category',
     },
@@ -167,7 +166,7 @@ onMounted(() => {
   p.setStream(stream)
   // 先录制,
   // record(stream)
-  data.chartInstance.setOption(props.opts)
+  chartInstance.setOption(props.opts)
 })
 </script>
 

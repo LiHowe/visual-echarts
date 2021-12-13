@@ -14,33 +14,41 @@ export enum COMPONENT_TYPE {
   COLOR
 }
 
-
 export interface BaseSettingItem<T> {
   label: string
-  component: COMPONENT_TYPE
-  dataType: BooleanConstructor | StringConstructor | NumberConstructor
   preset: T
 }
 
-export interface BaseCheckboxItem extends BaseSettingItem<Boolean> {}
+export interface BaseCheckboxItem extends BaseSettingItem<boolean> {
+  dataType: BooleanConstructor
+  component: COMPONENT_TYPE.CHECK_BOX
+}
+export interface BaseInputItem extends BaseSettingItem<string> {
+  dataType: StringConstructor
+  component: COMPONENT_TYPE.INPUT
+}
+export interface BaseColorItem extends BaseSettingItem<string> {
+  dataType: StringConstructor
+  component: COMPONENT_TYPE.COLOR
+}
+export interface BaseSliderItem extends BaseSettingItem<number> {
+  dataType: NumberConstructor,
+  component: COMPONENT_TYPE.SLIDER
+}
 
-export interface BaseInputItem extends BaseSettingItem<String> {}
-
-export interface BaseColorItem extends BaseSettingItem<String> {}
-
-export interface BaseNumberItem extends BaseSettingItem<Number> {
+export interface BaseNumberItem extends BaseSettingItem<number> {
+  dataType: NumberConstructor
+  component: COMPONENT_TYPE.NUMBER
   min?: number,
   max?: number,
   step?: number
 }
 
-export interface BaseSliderItem extends BaseNumberItem {}
-
-export interface BaseSelectItem extends BaseSettingItem<String> {
+export interface BaseSelectItem extends BaseSettingItem<string> {
+  dataType: StringConstructor
+  component: COMPONENT_TYPE.SELECT
   options: SelectOption[]
 }
-
-
 
 export function baseCheckboxItem (
   label = '是否显示',
@@ -66,7 +74,7 @@ export function baseInputItem (label: string, preset = ''): BaseInputItem {
 export function baseNumberItem (
   label: string,
   preset = 0,
-  range = [],
+  range: number[] = [],
   step = 1
 ): BaseNumberItem {
   const [min, max] = range
@@ -93,7 +101,7 @@ export function baseSelectItem (
     options = options.map(genOptions)
   } else if (fOpt instanceof Array) {
     options = options.map(item => {
-      const [label, value] = item
+      const [label, value] = <string[]>item
       return genOptions(label, value)
     })
   }
@@ -106,7 +114,7 @@ export function baseSelectItem (
   }
 }
 
-export function baseColorItem (label: string, preset: string): BaseColorItem {
+export function baseColorItem (label: string, preset: string = ''): BaseColorItem {
   return {
     label,
     preset,

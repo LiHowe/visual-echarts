@@ -10,6 +10,15 @@ import {
 import './styles/settings.css'
 
 import { nanoid } from 'nanoid'
+import type {
+  BaseCheckboxItem,
+  BaseColorItem,
+  BaseNumberItem,
+  BaseSelectItem,
+  BaseSliderItem,
+} from '../../echarts/settingsGenerator'
+import { SelectOption } from '../../echarts/utils'
+import { BaseSettingItem } from '../../echarts/settingsGenerator'
 
 export default defineComponent({
   name: 'SettingsBlock',
@@ -67,8 +76,7 @@ export default defineComponent({
       )
     }
 
-
-    function genNumberInput (data, key) {
+    function genNumberInput (data: BaseNumberItem, key: string) {
       const uid = nanoid(4)
       return (
         <div class="setting-item">
@@ -80,7 +88,7 @@ export default defineComponent({
       )
     }
 
-    function genSelect (data, key) {
+    function genSelect (data: BaseSelectItem, key: string) {
       const uid = nanoid(4)
       return (
         <div class="setting-item">
@@ -94,7 +102,7 @@ export default defineComponent({
       )
     }
 
-    function genOption (opts) {
+    function genOption (opts: SelectOption[]) {
       return opts.map(opt => (
         <el-option key={opt.value} label={opt.label} value={opt.value} />
       ))
@@ -111,7 +119,7 @@ export default defineComponent({
       )
     }
 
-    function genCheckbox (data, key) {
+    function genCheckbox (data: BaseCheckboxItem, key: string) {
       const uid = nanoid(4)
       return (
         <div class="setting-item inline">
@@ -121,7 +129,7 @@ export default defineComponent({
       )
     }
 
-    function genColorPicker (data, key) {
+    function genColorPicker (data: BaseColorItem, key:string) {
       return (
         <div class="setting-item">
           <p class="setting-item__label">{ data.label }</p>
@@ -130,7 +138,7 @@ export default defineComponent({
       )
     }
 
-    function genSlider (data, key) {
+    function genSlider (data: BaseSliderItem, key: string) {
       return (
         <div class="setting-item">
           <p class="setting-item__label">{ data.label }</p>

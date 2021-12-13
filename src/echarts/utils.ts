@@ -9,7 +9,7 @@ export type SelectOption = {
  * @param value
  * @return {{label, value}}
  */
-export function genOptions (label, value): SelectOption {
+export function genOptions (label: string, value: any): SelectOption {
   return {
     label,
     value
