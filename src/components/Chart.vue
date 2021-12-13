@@ -19,44 +19,124 @@ export default {
     data: {
       type: Array,
       default: () => []
-    }
+    },
+    // 图表类型
+    type: {
+      type: String,
+      default: 'line'
+    },
+    config: {
+      type: Object,
+      default: () => ({
+        showCode: false,
+        darkMode: false
+      })
+    },
   },
   data: () => ({
-    chartEl: null,
-    chartObj: null
+    ec: null,
+    chartInstance: null
   }),
   watch: {
-    opts: {
-      handler (val) {
-        this.chartObj.setOption(val)
-      },
-      deep: true
+    'config.darkMode': (val) => {
+      this.chartInstance.setOption({
+        darkMode: val,
+        backgroundColor: val ? '#100C2A' : 'transparent',
+        color: val
+          ? [
+            '#4992ff',
+            '#7cffb2',
+            '#fddd60',
+            '#ff6e76',
+            '#58d9f9',
+            '#05c091',
+            '#ff8a45',
+            '#8d48e3',
+            '#dd79ff',
+          ]
+          : [
+            '#5470c6',
+            '#91cc75',
+            '#fac858',
+            '#ee6666',
+            '#73c0de',
+            '#3ba272',
+            '#fc8452',
+            '#9a60b4',
+            '#ea7ccc'
+          ]
+      })
+    },
+    'config.showCode': val => {
+      const opts = this.chartInstance.getOption()
+      val && console.log(opts)
+    },
+    data: val => {
+      console.log('[图表] 数据改变, 数据为', val)
+      this.chartInstance.setOption({
+        dataset: {
+          source: val
+        }
+      })
     }
   },
   methods: {
-
+    preview () {
+      const v = document.createElement('video')
+      v.height = 200
+      v.width = 320
+      v.autoplay = true
+      v.controls = true
+      this.chartInstance.getDom().appendChild(v)
+      return {
+        setStream: stream => {
+          v.srcObject = stream
+        }
+      }
+    },
+    record (stream) {
+      const recorder = new MediaRecorder(stream)
+      recorder.start()
+      recorder.ondataavailable = e => {
+        const a = document.createElement('a')
+        a.download = 'video.mkv'
+        a.href = URL.createObjectURL(e.data)
+        a.click()
+      }
+      this.chartInstance.on('finished', () => {
+        if (recorder.state === 'inactive') return
+        setTimeout(() => {
+          recorder.stop()
+        }, 1000)
+      })
+    },
+    getStreamFromCanvas (frameRate = 30) {
+      const chartCanvas = this.chartInstance.getDom().querySelector('canvas')
+      return chartCanvas.captureStream(frameRate)
+    }
   },
   mounted() {
-    this.chartEl = this.$refs.ec
-    this.chartObj = echarts.init(this.chartEl)
-    this.chartObj.setOption({
+    this.chartInstance = echarts.init(this.ec.value)
+    const keys = Object.keys(this.data[0])
+    this.chartInstance.setOption({
       xAxis: {
         type: 'category',
       },
       yAxis: {
         type: 'value'
       },
-      series: [
-        { type: 'line', },
-        { type: 'line' },
-        { type: 'line' }
-      ],
+      series: new Array(keys.length - 1).fill({type: 'bar'}),
       dataset: {
-        dimensions: Object.keys(this.data[0]),
+        dimensions: keys,
         source: this.data
       }
     })
-    this.chartObj.setOption(this.opts)
+    const p = this.preview()
+    const stream = this.getStreamFromCanvas()
+    p.setStream(stream)
+    // 先录制,
+    // record(stream)
+    this.chartInstance.setOption(this.opts)
   }
 }
 </script>

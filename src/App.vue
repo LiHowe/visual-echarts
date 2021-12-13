@@ -10,9 +10,9 @@
 
 <script>
 import Player from '@/components/Player'
-import Settings from '@/components/Settings'
+import Settings from '@/components/Settings.jsx'
 import Chart from '@/components/Chart'
-import { getBaseTitleOptions } from '@/settings'
+import { getBaseTitleOptions } from '@/echarts'
 
 const settings = {
   title: getBaseTitleOptions()

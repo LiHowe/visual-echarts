@@ -1,5 +1,14 @@
-import { COMPONENT } from '@/settings';
+import { COMPONENT_TYPE } from '@/echarts';
+import {
+  genCheckbox,
+  genColorPicker,
+  genInput,
+  genNumberInput,
+  genSelect,
+  genSlider,
+} from '@/components/SettingsBlock/utils'
 import './index.css'
+
 export default {
   name: 'SettingBlock',
   props: {
@@ -49,53 +58,19 @@ export default {
     }
   },
   render() {
-    let uid = 1
-    const genSelect = (data, key) => {
-      return (
-        <li class="setting-item">
-          <label for={`select_${uid}`}>{ data.label }</label>
-          <select id={`select_${uid++}`} onchange={e => this.changeSelect(e, data, key)}>
-            {genOptions(data.options, key)}
-          </select>
-        </li>
-      )
-    }
-
-    const genOptions = (opts, key) => {
-      return opts.map(opt => {
-        return <option value={opt.value} selected={this.obj[key] === opt.value}>{opt.label}</option>
-      })
-    }
-
-    const genInput = (data, key) => {
-      return (
-        <li class="setting-item">
-          <label for={`input_${uid}`}>{ data.label }</label>
-          <input
-            type="text"
-            id={`input_${uid++}`}
-            value={this.obj[key]}
-            oninput={e => this.changeInput(e, data, key)}
-          />
-        </li>
-      )
-    }
-
-    const genCheckbox = (data, key) => {
-      return (
-        <li class="setting-item">
-          <label for={`checkbox_${uid}`}>{ data.label }</label>
-          <input
-            type="checkbox"
-            id={`checkbox_${uid++}`}
-            name=""
-            checked={this.obj[key]}
-            onchange={e => this.changeCheckbox(e, data, key)}
-          />
-        </li>
-      )
-    }
     const c = this.config
+    function genSub (data, key) {
+      return (
+        <setting-block
+          obj={this.obj[key]}
+          config={data.children}
+          label={data.label}
+          onChangeAttr={value => {
+            this.$emit({ key, value })
+          }}
+        />
+      )
+    }
 
     return (
       <ul class="settings-block">
@@ -104,13 +79,22 @@ export default {
           {
             Object.keys(c).map(key => {
               const d = c[key]
-              switch (d.type) {
-                case COMPONENT.SELECT:
+              if (d.children) {
+                return genSub(d, key)
+              }
+              switch (d.component) {
+                case COMPONENT_TYPE.SELECT:
                   return genSelect(d, key)
-                case COMPONENT.INPUT:
+                case COMPONENT_TYPE.INPUT:
                   return genInput(d, key)
-                case COMPONENT.CHECK_BOX:
+                case COMPONENT_TYPE.CHECK_BOX:
                   return genCheckbox(d, key)
+                case COMPONENT_TYPE.NUMBER:
+                  return genNumberInput(d, key)
+                case COMPONENT_TYPE.COLOR:
+                  return genColorPicker(d, key)
+                case COMPONENT_TYPE.SLIDER:
+                  return genSlider(d, key)
               }
             })
           }
