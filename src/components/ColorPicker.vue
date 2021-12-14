@@ -1,17 +1,22 @@
 <template>
   <div class="color-picker">
     <div class="color-trigger" :style="triggerStyle" @click.stop="show = true"></div>
-<!--    <ChromePicker :value="value" @input="changeColor"/>-->
+    <ChromePicker
+      v-show="show"
+      class="color-picker-content"
+      :style="{ top: pos.top + 20 + 'px', left: pos.left + 'px' }"
+      :value="value"
+      @input="changeColor"
+    />
   </div>
 </template>
 
 <script>
 import { Chrome } from 'vue-color'
-import Vue from 'vue'
 export default {
   name: 'ColorPicker',
   components: {
-    // ChromePicker: Chrome
+    ChromePicker: Chrome
   },
   props: {
     value: {
@@ -24,7 +29,11 @@ export default {
     pickerInstance: null,
     pickerWrapper: null,
     show: false,
-    listener: null
+    listener: null,
+    pos: {
+      left: 0,
+      top: 0
+    }
   }),
   computed: {
     triggerStyle() {
@@ -41,10 +50,13 @@ export default {
   },
   watch: {
     show(val) {
+      const { offsetLeft: left, offsetTop: top } = this.$el
+      this.pos = {
+        left,
+        top
+      }
       if (val) {
-        this.showPicker(this.$el)
-      } else {
-        this.hidePicker()
+        this.listenClickOutside()
       }
     }
   },
@@ -63,71 +75,19 @@ export default {
       if (this.value === res) return
       this.$emit('input', res)
     },
-    generatePicker () {
-      if (!this.pickerInstance) {
-        const vm = this
-        const Picker = new Vue({
-          render (h) {
-            return h(Chrome, {
-              attrs: {
-                value: vm.value
-              },
-              on: {
-                input: vm.changeColor
-              }
-            })
-          }
-        })
-        this.pickerInstance = Picker.$mount(document.createElement('div'))
-      }
-      return this.pickerInstance.$el
-    },
-    mountPicker () {
-      let uid = this.pickerInstance?._uid
-      const wrapper = document.createElement('div')
-      if (!uid) {
-        const child = this.generatePicker()
-        wrapper.appendChild(child)
-        uid = this.pickerInstance._uid
-      }
-      this.pickerWrapper = wrapper
-      wrapper.id = 'color-picker-wrapper_' + uid
-      wrapper.style.position = 'absolute'
-      this.updatePosition()
-      document.querySelector('.settings-wrapper').appendChild(wrapper)
-    },
     listenClickOutside () {
       if (this.listener) return
       this.listener = e => {
         // eslint-disable-next-line no-debugger
-        debugger
-        if (e.target.id !== this.pickerWrapper.id && e.target.id !== this.pickerInstance._uid) {
+        if (!e.path.includes(this.$el)) {
           this.show = false
         }
       }
       window.addEventListener('click', this.listener)
     },
-    /**
-     * update picker wrapper pos
-     */
-    updatePosition () {
-      if (!this.$el) return
-      this.pickerWrapper.style.left = this.$el.offsetLeft + 'px'
-      // eslint-disable-next-line no-debugger
-      this.pickerWrapper.style.top = this.$el.offsetTop + 20 + 'px'
-    },
-    showPicker() {
-      if (this.pickerWrapper && this.pickerInstance) {
-        this.pickerWrapper.style.display = 'block'
-        this.updatePosition()
-      } else {
-        this.mountPicker()
-      }
-      this.listenClickOutside()
-    },
-    hidePicker() {
-      this.pickerWrapper.style.display = 'none'
-    }
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.listener)
   }
 }
 </script>
@@ -140,5 +100,9 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   display: inline-block;
+  position: relative;
+}
+.color-picker-content {
+  position: absolute;
 }
 </style>

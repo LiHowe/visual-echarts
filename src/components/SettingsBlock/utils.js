@@ -1,1 +1,6 @@
-import ColorPicker from '@/components/ColorPicker'
+let uid = 1
+
+export function getUid () {
+  return ++uid
+}
+

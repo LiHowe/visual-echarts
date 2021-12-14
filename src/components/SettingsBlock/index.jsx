@@ -1,6 +1,7 @@
 import { COMPONENT_TYPE } from '@/echarts';
 import './index.css'
 import ColorPicker from '@/components/ColorPicker'
+import { getUid } from '@/components/SettingsBlock/utils'
 
 export default {
   name: 'SettingBlock',
@@ -29,6 +30,7 @@ export default {
       if (typeof originData === 'object') {
         value = Object.assign({}, originData, value)
       }
+      console.log('[SettingsBlock] emit:', key, value, this.obj)
       this.$set(this.obj, key, value)
       this.$emit('changeAttr', this.obj)
     }
@@ -48,12 +50,12 @@ export default {
       )
     }
 
-    let uid = 1
     const genSelect = (data, key) => {
+      const uid = getUid()
       return (
         <li class="setting-item">
           <label for={`select_${uid}`}>{ data.label }</label>
-          <select id={`select_${uid++}`} onchange={({ target }) => {
+          <select id={`select_${uid}`} onchange={({ target }) => {
             this.emit({
               key,
               value: data.dataType(target.options[target.selectedIndex].value)
@@ -72,12 +74,13 @@ export default {
     }
 
     const genInput = (data, key) => {
+      const uid = getUid()
       return (
         <li class="setting-item">
           <label for={`input_${uid}`}>{ data.label }</label>
           <input
             type="text"
-            id={`input_${uid++}`}
+            id={`input_${uid}`}
             value={this.obj[key]}
             oninput={({target}) => {
               this.emit({
@@ -91,13 +94,15 @@ export default {
     }
 
     const genCheckbox = (data, key) => {
+      const uid = getUid()
       return (
         <li class="setting-item">
           <label for={`checkbox_${uid}`}>{ data.label }</label>
           <input
             type="checkbox"
-            id={`checkbox_${uid++}`}
+            id={`checkbox_${uid}`}
             checked={this.obj[key]}
+            value={this.obj[key]}
             onchange={({ target }) => {
               this.emit({
                 key,
@@ -135,12 +140,13 @@ export default {
     }
 
     const genNumberInput = (data, key) => {
+      const uid = getUid()
       return (
         <div class="setting-item">
           <label for={`number_${uid}`}>{ data.label }</label>
           <input
             type="number"
-            id={`number_${++uid}`}
+            id={`number_${uid}`}
             value={this.obj[key]}
             oninput={({ target }) => {
               this.emit({
@@ -156,30 +162,32 @@ export default {
     return (
       <ul class="settings-block">
         <div class="title">{ this.label }</div>
-        <ul>
-          {
-            Object.keys(c).map(key => {
-              const d = c[key]
-              if (d.children) {
-                return genSub(d, key)
-              }
-              switch (d.component) {
-                case COMPONENT_TYPE.SELECT:
-                  return genSelect(d, key)
-                case COMPONENT_TYPE.INPUT:
-                  return genInput(d, key)
-                case COMPONENT_TYPE.CHECK_BOX:
-                  return genCheckbox(d, key)
-                case COMPONENT_TYPE.NUMBER:
-                  return genNumberInput(d, key)
-                case COMPONENT_TYPE.COLOR:
-                  return genColorPicker(d, key)
-                case COMPONENT_TYPE.SLIDER:
-                  return genSlider(d, key)
-              }
-            })
-          }
-        </ul>
+        <li>
+          <ul class="settings-block__content">
+            {
+              Object.keys(c).map(key => {
+                const d = c[key]
+                if (d.children) {
+                  return genSub(d, key)
+                }
+                switch (d.component) {
+                  case COMPONENT_TYPE.SELECT:
+                    return genSelect(d, key)
+                  case COMPONENT_TYPE.INPUT:
+                    return genInput(d, key)
+                  case COMPONENT_TYPE.CHECK_BOX:
+                    return genCheckbox(d, key)
+                  case COMPONENT_TYPE.NUMBER:
+                    return genNumberInput(d, key)
+                  case COMPONENT_TYPE.COLOR:
+                    return genColorPicker(d, key)
+                  case COMPONENT_TYPE.SLIDER:
+                    return genSlider(d, key)
+                }
+              })
+            }
+          </ul>
+        </li>
       </ul>
     )
   }

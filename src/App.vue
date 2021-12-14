@@ -2,8 +2,8 @@
   <div id="app">
     <Settings v-model="settings" />
     <div>
-      <Player />
-      <Chart :opts="settings" :data="mockedData"/>
+      <Chart :opts="settings" :data="mockedData" :before-set-option="grabFrame"/>
+      <Player :stream="stream"/>
     </div>
   </div>
 </template>
@@ -59,8 +59,19 @@ export default {
   },
   data: () => ({
     settings,
-    mockedData
-  })
+    mockedData,
+    stream: new MediaStream()
+  }),
+  methods: {
+    grabFrame(ec) {
+      console.log('enter before set option')
+      const canvas = ec.getDom().querySelector('canvas')
+      this.stream = canvas.captureStream(30)
+    }
+  },
+  mounted() {
+    console.log(settings)
+  }
 }
 </script>
 
@@ -84,7 +95,7 @@ html, body {
   padding: 10px;
   height: 100%;
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: visible;
   overflow-y: auto;
   position: relative;
 }

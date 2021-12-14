@@ -31,19 +31,19 @@ export default {
         },
         {
           label: '图例',
-          fn: d => this.applySettings('title', d),
+          fn: d => this.applySettings('legend', d),
           target: this.clonedData.legend,
           config: getBaseLegendOptions(true)
         },
         {
           label: 'X轴设置',
-          fn: d => this.applySettings('title', d),
+          fn: d => this.applySettings('xAxis', d),
           target: this.clonedData.xAxis,
           config: getBaseAxisOptionsX(true)
         },
         {
           label: 'Y轴设置',
-          fn: d => this.applySettings('title', d),
+          fn: d => this.applySettings('yAxis', d),
           target: this.clonedData.yAxis,
           config: getBaseAxisOptionsY(true)
         }
@@ -61,13 +61,12 @@ export default {
   },
   methods: {
     applySettings (attr, value) {
-      this.clonedData[attr] = value
       console.log('[Settings] applySettings:', attr, value)
+      this.clonedData[attr] = value
       this.$emit('input', this.clonedData)
     },
   },
   render(h) {
-    console.log('enter render', this.blocks)
     return (
       h('aside', {
         class: 'settings-wrapper'

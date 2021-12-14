@@ -24,7 +24,7 @@ export function getBaseTitleOptions(detail = false) {
         ])
       }
     },
-    show: baseCheckboxItem('显示标题', true),
+    show: baseCheckboxItem('显示标题'),
     left: baseSelectItem('对齐方式', 'auto',[
       ['自动', 'auto'],
       ['居左', 'left'],

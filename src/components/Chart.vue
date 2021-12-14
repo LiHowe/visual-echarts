@@ -32,6 +32,10 @@ export default {
         darkMode: false
       })
     },
+    beforeSetOption: {
+      type: Function,
+      default: () => {}
+    }
   },
   data: () => ({
     chartInstance: null
@@ -71,7 +75,7 @@ export default {
       val && console.log(opts)
     },
     data: val => {
-      console.log('[图表] 数据改变, 数据为', val)
+      console.log('[Chart] 数据改变, 数据为', val)
       this.chartInstance.setOption({
         dataset: {
           source: val
@@ -80,7 +84,8 @@ export default {
     },
     opts: {
       handler(val) {
-        console.log('[图表] 配置改变, 新配置为', val)
+        this.beforeSetOption(this.chartInstance, val)
+        console.log('[Chart] 配置改变, 新配置为', val)
         this.chartInstance.setOption(val)
       },
       deep: true,
@@ -138,11 +143,6 @@ export default {
         source: this.data
       }
     })
-    const p = this.preview()
-    const stream = this.getStreamFromCanvas()
-    p.setStream(stream)
-    // 先录制,
-    // record(stream)
   }
 }
 </script>
