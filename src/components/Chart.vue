@@ -34,7 +34,6 @@ export default {
     },
   },
   data: () => ({
-    ec: null,
     chartInstance: null
   }),
   watch: {
@@ -78,6 +77,13 @@ export default {
           source: val
         }
       })
+    },
+    opts: {
+      handler(val) {
+        console.log('[图表] 配置改变, 新配置为', val)
+        this.chartInstance.setOption(val)
+      },
+      deep: true,
     }
   },
   methods: {
@@ -116,8 +122,9 @@ export default {
     }
   },
   mounted() {
-    this.chartInstance = echarts.init(this.ec.value)
+    this.chartInstance = echarts.init(this.$refs.ec)
     const keys = Object.keys(this.data[0])
+    this.chartInstance.setOption(this.opts)
     this.chartInstance.setOption({
       xAxis: {
         type: 'category',
@@ -136,7 +143,6 @@ export default {
     p.setStream(stream)
     // 先录制,
     // record(stream)
-    this.chartInstance.setOption(this.opts)
   }
 }
 </script>

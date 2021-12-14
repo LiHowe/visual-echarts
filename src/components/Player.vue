@@ -9,7 +9,7 @@ export default {
   name: 'player',
   props: {
     stream: {
-      type: Object,
+      type: MediaStream,
       default: () => new MediaStream()
     }
   }

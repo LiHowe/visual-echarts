@@ -12,10 +12,18 @@
 import Player from '@/components/Player'
 import Settings from '@/components/Settings.jsx'
 import Chart from '@/components/Chart'
-import { getBaseTitleOptions } from '@/echarts'
+import {
+  getBaseTitleOptions,
+  getBaseLegendOptions,
+  getBaseAxisOptionsY,
+  getBaseAxisOptionsX
+} from '@/echarts'
 
 const settings = {
-  title: getBaseTitleOptions()
+  title: getBaseTitleOptions(),
+  legend: getBaseLegendOptions(),
+  xAxis: getBaseAxisOptionsX(),
+  yAxis: getBaseAxisOptionsY()
 }
 
 const mockedData = [
@@ -52,7 +60,7 @@ export default {
   data: () => ({
     settings,
     mockedData
-  }),
+  })
 }
 </script>
 
@@ -65,6 +73,18 @@ html, body {
   height: 100vh;
   width: 100vw;
   display: grid;
-  grid-template-columns: 25% 75%;
+  grid-template-columns: 250px auto;
+}
+* {
+  box-sizing: border-box;
+}
+.settings-wrapper {
+  box-shadow: 2px 0 4px #e9e9e9;
+  background: #ebebeb;
+  padding: 10px;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 </style>

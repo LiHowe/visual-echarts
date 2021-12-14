@@ -1,13 +1,6 @@
 import { COMPONENT_TYPE } from '@/echarts';
-import {
-  genCheckbox,
-  genColorPicker,
-  genInput,
-  genNumberInput,
-  genSelect,
-  genSlider,
-} from '@/components/SettingsBlock/utils'
 import './index.css'
+import ColorPicker from '@/components/ColorPicker'
 
 export default {
   name: 'SettingBlock',
@@ -29,46 +22,129 @@ export default {
     }
   },
   methods: {
-    changeSelect({ target }, data, key) {
-      this.emit({
-        key,
-        value: data.dataType[0](target.options[target.selectedIndex].value)
-      })
-    },
-    changeCheckbox({ target }, data, key) {
-      this.emit({
-        key,
-        value: data.dataType[0](target.checked)
-      })
-    },
-    changeInput({ target }, data, key) {
-      this.emit({
-        key,
-        value: data.dataType[0](target.value)
-      })
-    },
     emit({key, value}) {
+      console.log('Emit,', key, value)
       const originData = this.obj[key]
       // if object, merge
       if (typeof originData === 'object') {
         value = Object.assign({}, originData, value)
       }
       this.$set(this.obj, key, value)
-      this.$emit('change-attr', this.obj)
+      this.$emit('changeAttr', this.obj)
     }
   },
   render() {
     const c = this.config
-    function genSub (data, key) {
+    const genSub = (data, key) => {
       return (
         <setting-block
           obj={this.obj[key]}
           config={data.children}
           label={data.label}
           onChangeAttr={value => {
-            this.$emit({ key, value })
+            this.emit({ key, value })
           }}
         />
+      )
+    }
+
+    let uid = 1
+    const genSelect = (data, key) => {
+      return (
+        <li class="setting-item">
+          <label for={`select_${uid}`}>{ data.label }</label>
+          <select id={`select_${uid++}`} onchange={({ target }) => {
+            this.emit({
+              key,
+              value: data.dataType(target.options[target.selectedIndex].value)
+            })
+          }}>
+            {genOptions(data.options, key)}
+          </select>
+        </li>
+      )
+    }
+
+    const genOptions = (opts, key) => {
+      return opts.map(opt => {
+        return <option value={opt.value} selected={this.obj[key] === opt.value}>{opt.label}</option>
+      })
+    }
+
+    const genInput = (data, key) => {
+      return (
+        <li class="setting-item">
+          <label for={`input_${uid}`}>{ data.label }</label>
+          <input
+            type="text"
+            id={`input_${uid++}`}
+            value={this.obj[key]}
+            oninput={({target}) => {
+              this.emit({
+                key,
+                value: data.dataType(target.value)
+              })
+            }}
+          />
+        </li>
+      )
+    }
+
+    const genCheckbox = (data, key) => {
+      return (
+        <li class="setting-item">
+          <label for={`checkbox_${uid}`}>{ data.label }</label>
+          <input
+            type="checkbox"
+            id={`checkbox_${uid++}`}
+            checked={this.obj[key]}
+            onchange={({ target }) => {
+              this.emit({
+                key,
+                value: data.dataType(target.checked)
+              })
+            }}
+          />
+        </li>
+      )
+    }
+
+// TODO: 颜色选择器组件未开发
+    const genColorPicker = (data, key) => {
+      return (
+        <div class="setting-item">
+          <p class="setting-item__label">{ data.label }</p>
+          <ColorPicker value={this.obj[key]} />
+        </div>
+      )
+    }
+
+// TODO: 滑块组件未开发
+    const genSlider = (data, key) => {
+      return (
+        <div class="setting-item">
+          <p class="setting-item__label">{ data.label }</p>
+          <input type="slider" value={this.obj[key]} />
+        </div>
+      )
+    }
+
+    const genNumberInput = (data, key) => {
+      return (
+        <div class="setting-item">
+          <label for={`number_${uid}`}>{ data.label }</label>
+          <input
+            type="number"
+            id={`number_${++uid}`}
+            value={this.obj[key]}
+            oninput={({ target }) => {
+              this.emit({
+                key,
+                value: data.dataType(target.value)
+              })
+            }}
+          />
+        </div>
       )
     }
 

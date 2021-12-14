@@ -1,16 +1,16 @@
 <template>
   <div class="color-picker">
     <input v-model="color" />
-    <chrome-picker v-model="colorObject" />
+    <ChromePicker v-model="colorObject" />
   </div>
 </template>
 
 <script>
-import { ChromePicker } from 'vue-color'
+import { Chrome } from 'vue-color'
 export default {
   name: 'ColorPicker',
   components: {
-    ChromePicker
+    ChromePicker: Chrome
   },
   data: () => ({
     color: '',

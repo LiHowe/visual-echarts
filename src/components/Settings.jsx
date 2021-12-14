@@ -20,57 +20,72 @@ export default {
   data: () => ({
     clonedData: {}
   }),
+  computed: {
+    blocks() {
+      return [
+        {
+          label: '标题配置',
+          fn: d => this.applySettings('title', d),
+          target: this.clonedData.title,
+          config: getBaseTitleOptions(true)
+        },
+        {
+          label: '图例',
+          fn: d => this.applySettings('title', d),
+          target: this.clonedData.legend,
+          config: getBaseLegendOptions(true)
+        },
+        {
+          label: 'X轴设置',
+          fn: d => this.applySettings('title', d),
+          target: this.clonedData.xAxis,
+          config: getBaseAxisOptionsX(true)
+        },
+        {
+          label: 'Y轴设置',
+          fn: d => this.applySettings('title', d),
+          target: this.clonedData.yAxis,
+          config: getBaseAxisOptionsY(true)
+        }
+      ]
+    }
+  },
+  watch: {
+    value: {
+      handler (val) {
+        this.clonedData = val
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   methods: {
-    emitChange () {
-      this.$emit('input', this.value)
-    },
     applySettings (attr, value) {
-      console.log('变更配置, 属性:', attr, '值:', value)
       this.clonedData[attr] = value
-      this.$emit('update:modelValue', this.clonedData)
+      console.log('[Settings] applySettings:', attr, value)
+      this.$emit('input', this.clonedData)
     },
   },
-  beforeCreate() {
-    this.blocks = [
-      {
-        label: '标题配置',
-        fn: d => this.applySettings('title', d),
-        target: this.value.title,
-        config: getBaseTitleOptions(true)
-      },
-      {
-        label: '图例',
-        fn: d => this.applySettings('title', d),
-        target: this.value.legend,
-        config: getBaseLegendOptions(true)
-      },
-      {
-        label: 'X轴设置',
-        fn: d => this.applySettings('title', d),
-        target: this.value.xAxis,
-        config: getBaseAxisOptionsX(true)
-      },
-      {
-        label: 'Y轴设置',
-        fn: d => this.applySettings('title', d),
-        target: this.value.yAxis,
-        config: getBaseAxisOptionsY(true)
-      }
-    ]
-  },
-  render: h => (
-    h('aside', {
-      class: 'echarts-wrapper'
-    }, [
-      this.blocks.map(
-        ({ label, config, fn, target}) =>
-          h(SettingsBlock, {
-            label,
-            config,
-            obj: target,
-            onChangeAttr: fn
-          })
-      )
-    ])
-  )
+  render(h) {
+    console.log('enter render', this.blocks)
+    return (
+      h('aside', {
+        class: 'settings-wrapper'
+      }, [
+        this.blocks.map(
+          ({ label, config, fn, target}) =>
+            h(SettingsBlock, {
+              props: {
+                label,
+                config,
+                obj: target,
+              },
+              on: {
+                changeAttr: fn
+              }
+            })
+        )
+      ])
+    )
+  }
 }
