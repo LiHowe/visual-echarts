@@ -114,7 +114,12 @@ export default {
       return (
         <div class="setting-item">
           <p class="setting-item__label">{ data.label }</p>
-          <ColorPicker value={this.obj[key]} />
+          <ColorPicker value={this.obj[key]} oninput={color => {
+            this.emit({
+              key,
+              value: data.dataType(color)
+            })
+          }}/>
         </div>
       )
     }
