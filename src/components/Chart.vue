@@ -84,13 +84,13 @@ export default {
       const opts = this.chartInstance.getOption()
       val && console.log(opts)
     },
-    data: val => {
+    data(val) {
       console.log('[Chart] 数据改变, 数据为', val)
       this.chartInstance.setOption({
         dataset: {
           source: val
         }
-      }, true)
+      })
     },
     opts: {
       handler(val) {

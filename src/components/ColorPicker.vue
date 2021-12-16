@@ -101,6 +101,7 @@ export default {
   cursor: pointer;
   display: inline-block;
   position: relative;
+  border: 1px solid #e9e9e9;
 }
 .color-picker-content {
   position: absolute;
