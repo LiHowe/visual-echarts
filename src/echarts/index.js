@@ -12,5 +12,9 @@ export {
 } from './axis'
 
 export {
+  getBaseOptions
+} from './base'
+
+export {
   COMPONENT_TYPE
 } from './settingsGenerator'

@@ -1,20 +1,20 @@
-import {baseNumberItem} from './settingsGenerator'
+import { baseNumberItem } from './settingsGenerator'
 
-export function getPositionOptions (options) {
+export function getPositionOptions(options) {
   const {
     left,
     right,
     bottom,
     top,
     z,
-    zlevel
+    zlevel,
   } = options || {}
   return {
-    left: baseNumberItem('左', left),
-    right: baseNumberItem('右', right),
-    top: baseNumberItem('上', top),
-    bottom: baseNumberItem('下', bottom),
-    zlevel: baseNumberItem('层级', zlevel),
-    z: baseNumberItem('Z', z)
+    left: baseNumberItem({ label: '左', preset: left }),
+    right: baseNumberItem({ label: '右', preset: right }),
+    top: baseNumberItem({ label: '上', preset: top }),
+    bottom: baseNumberItem({ label: '下', preset: bottom }),
+    zlevel: baseNumberItem({ label: '层级', preset: zlevel }),
+    z: baseNumberItem({ label: 'Z', preset: z }),
   }
 }

@@ -2,7 +2,7 @@ import {
   getBaseTitleOptions,
   getBaseLegendOptions,
   getBaseAxisOptionsX,
-  getBaseAxisOptionsY,
+  getBaseAxisOptionsY, getBaseOptions,
 } from '@/echarts'
 import SettingsBlock from "@/components/SettingsBlock";
 
@@ -46,6 +46,12 @@ export default {
           fn: d => this.applySettings('yAxis', d),
           target: this.clonedData.yAxis,
           config: getBaseAxisOptionsY(true)
+        },
+        {
+          label: '基础设置',
+          fn: d => this.applySettings(null, d),
+          target: this.clonedData,
+          config: getBaseOptions(true)
         }
       ]
     }
@@ -61,8 +67,12 @@ export default {
   },
   methods: {
     applySettings (attr, value) {
-      console.log('[Settings] applySettings:', attr, value)
-      this.clonedData[attr] = value
+      if (!attr) {
+        this.clonedData = { ...this.clonedData, ...value }
+      } else {
+        this.clonedData[attr] = value
+      }
+      console.log('[Settings] applySettings:', { attr, value, clonedData: this.clonedData })
       this.$emit('input', this.clonedData)
     },
   },

@@ -17,21 +17,32 @@ export function getBaseTitleOptions(detail = false) {
     textStyle: {
       label: '标题样式',
       children: {
-        fontWeight: baseSelectItem('字体粗细', 'normal', [
-          ['细', 'lighter'],
-          ['标准', 'normal'],
-          ['粗', 'bolder'],
-        ])
-      }
+        fontWeight: baseSelectItem({
+          label: '字体粗细',
+          preset: 'normal',
+          options: [
+            ['细', 'lighter'],
+            ['标准', 'normal'],
+            ['粗', 'bolder'],
+          ],
+        }),
+      },
     },
-    show: baseCheckboxItem('显示标题'),
-    left: baseSelectItem('对齐方式', 'auto',[
-      ['自动', 'auto'],
-      ['居左', 'left'],
-      ['居中', 'center'],
-      ['居右', 'right']
-    ]),
-    text: baseInputItem('标题内容', '默认标题')
+    show: baseCheckboxItem({ label: '显示标题' }),
+    left: baseSelectItem({
+      label: '对齐方式',
+      preset: 'auto',
+      options: [
+        ['自动', 'auto'],
+        ['居左', 'left'],
+        ['居中', 'center'],
+        ['居右', 'right'],
+      ],
+    }),
+    text: baseInputItem({
+      label: '标题内容',
+      preset: '默认标题',
+    }),
   }
   if (!detail) {
     return simplifyOptions(base)

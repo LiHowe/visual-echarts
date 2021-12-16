@@ -27,8 +27,8 @@ export default {
       console.log('Emit,', key, value)
       const originData = this.obj[key]
       // if object, merge
-      if (typeof originData === 'object') {
-        value = Object.assign({}, originData, value)
+      if (originData instanceof Object) {
+        value = Object.assign(originData, value)
       }
       console.log('[SettingsBlock] emit:', key, value, this.obj)
       this.$set(this.obj, key, value)
@@ -37,6 +37,21 @@ export default {
   },
   render() {
     const c = this.config
+
+    const isHidden = (data) => {
+      if (!data.hidden) return false
+      if (typeof data.hidden === 'boolean') return data.hidden
+      return data.hidden(this.obj)
+    }
+
+    const callFnWithCatch = (fn, ...args) => {
+      try {
+        fn(...args)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
     const genSub = (data, key) => {
       return (
         <setting-block
@@ -58,7 +73,7 @@ export default {
           <select id={`select_${uid}`} onchange={({ target }) => {
             this.emit({
               key,
-              value: data.dataType(target.options[target.selectedIndex].value)
+              value: JSON.parse(target.options[target.selectedIndex].value)
             })
           }}>
             {genOptions(data.options, key)}
@@ -68,8 +83,11 @@ export default {
     }
 
     const genOptions = (opts, key) => {
+      const isSameValue = (a, b) => {
+        return JSON.stringify(a) === JSON.stringify(b)
+      }
       return opts.map(opt => {
-        return <option value={opt.value} selected={this.obj[key] === opt.value}>{opt.label}</option>
+        return <option value={JSON.stringify(opt.value)} selected={isSameValue(this.obj[key], opt.value)}>{opt.label}</option>
       })
     }
 
@@ -95,26 +113,37 @@ export default {
 
     const genCheckbox = (data, key) => {
       const uid = getUid()
+      const isChecked = data.trigger ? data.trigger(this.obj) : this.obj[key]
+      const handler = ({ target }) => {
+        if (data.handler) {
+          callFnWithCatch(data.handler, {
+            val: target.checked,
+            opts: this.obj,
+            emit: this.emit,
+            key
+          })
+        } else {
+          this.emit({
+            key,
+            value: data.dataType(target.checked)
+          })
+        }
+      }
+      if (isHidden(data)) return null
       return (
         <li class="setting-item">
           <label for={`checkbox_${uid}`}>{ data.label }</label>
           <input
             type="checkbox"
             id={`checkbox_${uid}`}
-            checked={this.obj[key]}
+            checked={isChecked}
             value={this.obj[key]}
-            onchange={({ target }) => {
-              this.emit({
-                key,
-                value: data.dataType(target.checked)
-              })
-            }}
+            onchange={handler}
           />
         </li>
       )
     }
 
-// TODO: 颜色选择器组件未开发
     const genColorPicker = (data, key) => {
       return (
         <div class="setting-item">
@@ -141,6 +170,22 @@ export default {
 
     const genNumberInput = (data, key) => {
       const uid = getUid()
+      const handler = ({ target }) => {
+        if (data.handler) {
+          callFnWithCatch(data.handler, {
+            val: target.value,
+            opts: this.obj,
+            emit: this.emit,
+            key
+          })
+        } else {
+          this.emit({
+            key,
+            value: data.dataType(target.value)
+          })
+        }
+      }
+      if (isHidden(data)) return null
       return (
         <div class="setting-item">
           <label for={`number_${uid}`}>{ data.label }</label>
@@ -148,12 +193,10 @@ export default {
             type="number"
             id={`number_${uid}`}
             value={this.obj[key]}
-            oninput={({ target }) => {
-              this.emit({
-                key,
-                value: data.dataType(target.value)
-              })
-            }}
+            max={data.max}
+            min={data.min}
+            step={data.step}
+            oninput={handler}
           />
         </div>
       )

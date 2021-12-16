@@ -13,35 +13,71 @@ export const COMPONENT_TYPE = {
   COLOR: 5
 }
 
-export function baseCheckboxItem (
-  label = '是否显示',
-  preset = true
-) {
+function baseItem (config) {
   return {
+    ...config,
+    hidden: () => false,
+    disabled: () => false,
+    setHidden(fn) {
+      this.hidden = fn
+      return this
+    }
+  }
+}
+
+
+export function baseCheckboxItem ({
+  label = '是否显示',
+  preset = true,
+}) {
+  return baseItem({
     label,
     component: COMPONENT_TYPE.CHECK_BOX,
     dataType: Boolean,
     preset
-  }
+  })
 }
 
-export function baseInputItem (label, preset = '') {
-  return {
+/**
+ * 自定义点选框
+ * 用于控制虚拟属性(非echarts属性)
+ */
+export function customCheckboxItem ({
+  label,
+  preset = false,
+  handler = () => {}
+}) {
+  return baseItem({
+    label,
+    component: COMPONENT_TYPE.CHECK_BOX,
+    dataType: Boolean,
+    preset,
+    handler,
+    trigger: () => false
+  })
+}
+
+
+export function baseInputItem ({
+  label,
+  preset = ''
+}) {
+  return baseItem({
     label,
     component: COMPONENT_TYPE.INPUT,
     dataType: String,
     preset
-  }
+  })
 }
 
-export function baseNumberItem (
+export function baseNumberItem ({
   label,
   preset = 0,
   range = [],
-  step = 1
-) {
+  step = 1,
+}) {
   const [min, max] = range
-  return {
+  return baseItem({
     label,
     component: COMPONENT_TYPE.NUMBER,
     dataType: Number,
@@ -49,14 +85,27 @@ export function baseNumberItem (
     min,
     max,
     step
+  })
+}
+
+export function customNumberItem({
+  label,
+  preset,
+  range = [],
+  step = 1,
+  handler
+}) {
+  return {
+    ...baseNumberItem({ label, preset, range, step }),
+    handler
   }
 }
 
-export function baseSelectItem (
+export function baseSelectItem ({
   label,
   preset,
-  options
-) {
+  options,
+}) {
   const fOpt = options[0]
   if (typeof fOpt === 'string') {
     options = options.map(item => genOptions(item, item))
@@ -68,29 +117,52 @@ export function baseSelectItem (
       return genOptions(label, value)
     })
   }
-  return {
+  return baseItem({
     label,
     component: COMPONENT_TYPE.SELECT,
     dataType: String,
     preset,
     options
-}
+  })
 }
 
-export function baseColorItem (label, preset) {
-  return {
+export function baseColorItem ({
+  label,
+  preset
+}) {
+  return baseItem({
     label,
     preset,
     component: COMPONENT_TYPE.COLOR,
     dataType: String
-  }
+  })
 }
 
-export function baseSliderItem (label, preset) {
-  return {
+export function baseSliderItem ({
+  label,
+  preset
+}) {
+  return baseItem({
     label,
     preset,
     component: COMPONENT_TYPE.SLIDER,
     dataType: Number
-  }
+  })
 }
+
+/**
+ * 隐藏框
+ * @param arg
+ */
+export function baseHiddenItem (arg) {
+  return baseItem({
+    preset: arg,
+    hidden: () => true
+  })
+}
+
+// export function baseConnectItem (config, connection) {
+//   return {
+//
+//   }
+// }

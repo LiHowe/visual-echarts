@@ -1,10 +1,17 @@
 <template>
   <div id="app">
-    <Settings v-model="settings" />
-    <div>
-      <Chart :opts="settings" :data="mockedData" :before-set-option="grabFrame"/>
-      <Player :stream="stream"/>
+    <chart-picker @changeType="t => this.chartType = t" />
+    <div class="page-content" ref="content">
+      <Chart
+        :dimensions="['product', '2015', '2016', '2017']"
+        :opts="settings"
+        :data="mockedData"
+        :chart-type="chartType"
+        :before-set-option="grabFrame"
+      />
+      <Player :stream="stream" :size="playerSize" :range="$refs.content" debug/>
     </div>
+    <Settings v-model="settings" />
   </div>
 </template>
 
@@ -12,42 +19,28 @@
 import Player from '@/components/Player'
 import Settings from '@/components/Settings.jsx'
 import Chart from '@/components/Chart'
+import ChartPicker from '@/components/ChartPicker'
 import {
   getBaseTitleOptions,
   getBaseLegendOptions,
   getBaseAxisOptionsY,
-  getBaseAxisOptionsX
+  getBaseAxisOptionsX,
+  getBaseOptions,
 } from '@/echarts'
 
 const settings = {
   title: getBaseTitleOptions(),
   legend: getBaseLegendOptions(),
   xAxis: getBaseAxisOptionsX(),
-  yAxis: getBaseAxisOptionsY()
+  yAxis: getBaseAxisOptionsY(),
+  ...getBaseOptions()
 }
 
 const mockedData = [
-  {
-    year: '2010',
-    q1: 100,
-    q2: 200,
-    q3: 150,
-    q4: 300
-  },
-  {
-    year: '2011',
-    q1: 120,
-    q2: 230,
-    q3: 180,
-    q4: 350
-  },
-  {
-    year: '2012',
-    q1: 200,
-    q2: 140,
-    q3: 350,
-    q4: 500
-  }
+  { product: 'Matcha Latte', '2015': 43.3, '2016': 85.8, '2017': 93.7 },
+  { product: 'Milk Tea', '2015': 83.1, '2016': 73.4, '2017': 55.1 },
+  { product: 'Cheese Cocoa', '2015': 86.4, '2016': 65.2, '2017': 82.5 },
+  { product: 'Walnut Brownie', '2015': 72.4, '2016': 53.9, '2017': 39.1 }
 ]
 
 export default {
@@ -55,22 +48,27 @@ export default {
   components: {
     Player,
     Settings,
-    Chart
+    Chart,
+    ChartPicker
   },
   data: () => ({
     settings,
     mockedData,
-    stream: new MediaStream()
+    stream: new MediaStream(),
+    chartType: 'bar',
+    playerSize: {
+      h: 180,
+      w: 300
+    }
   }),
   methods: {
     grabFrame(ec) {
       console.log('enter before set option')
       const canvas = ec.getDom().querySelector('canvas')
-      this.stream = canvas.captureStream(30)
+      this.stream = canvas.captureStream(60)
+      this.playerSize.w = canvas.width / 2
+      this.playerSize.h = canvas.height / 2
     }
-  },
-  mounted() {
-    console.log(settings)
   }
 }
 </script>
@@ -84,7 +82,7 @@ html, body {
   height: 100vh;
   width: 100vw;
   display: grid;
-  grid-template-columns: 250px auto;
+  grid-template-columns: 250px auto 250px;
 }
 * {
   box-sizing: border-box;
@@ -97,6 +95,9 @@ html, body {
   width: 100%;
   overflow-x: visible;
   overflow-y: auto;
+  position: relative;
+}
+.page-content {
   position: relative;
 }
 </style>

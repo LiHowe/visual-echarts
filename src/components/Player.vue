@@ -1,6 +1,7 @@
 <template>
   <div
     class="player-wrapper"
+    :class="{debug}"
     :style="wrapperStyle"
     @mousedown="startMove"
     @mousemove="move"
@@ -28,6 +29,10 @@ export default {
     range: {
       type: HTMLElement,
       default: () => document.body
+    },
+    debug: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -39,11 +44,7 @@ export default {
   }),
   computed: {
     wrapperPosition() {
-      const offsetX = this.$refs.video?.clientWidth / 2 ?? 0
-      const offsetY = this.$refs.video?.clientHeight / 2 ?? 0
-      const y = this.pos.y - offsetY
-      const x = this.pos.x - offsetX
-      return this.detectRange({ x, y, offsetX, offsetY })
+      return this.detectRange(this.pos)
     },
     wrapperStyle() {
       const { x, y } = this.wrapperPosition
@@ -60,28 +61,36 @@ export default {
       this.$refs.video.srcObject = val
     }
   },
+  mounted() {
+    const selfWidth = this.$refs.video?.clientWidth ?? 0
+    const selfHeight = this.$refs.video?.clientHeight ?? 0
+    this.pos.selfWidth = selfWidth
+    this.pos.selfHeight = selfHeight
+  },
   methods: {
     startMove() {
       this.isMoving = true
     },
     move (e) {
       if (!this.isMoving) return
-      console.log('move', e)
-      this.pos.x = e.x
-      this.pos.y = e.y
+      const { clientX, clientY } = e
+      console.log('move', e, { clientX, clientY })
+      this.pos.x = clientX - this.pos.selfWidth / 2
+      this.pos.y = clientY - this.pos.selfHeight / 2
+
     },
     endMove () {
       this.isMoving = false
     },
-    detectRange ({ x, y, offsetX, offsetY }) {
+    detectRange ({ x, y }) {
       if (!this.range) return {
         x, y
       }
-      const { offsetLeft, offsetTop, clientHeight, clientWidth } = this.range
-      if (x < offsetLeft) x = 0
-      if (y < offsetTop) y = 0
-      if (x + 2 * offsetX > clientWidth - offsetLeft) x = clientWidth - 2 * offsetX
-      if (y + 2 * offsetY > clientHeight - offsetTop) y = clientHeight - 2 * offsetY
+      const { clientHeight, clientWidth, offsetLeft, offsetTop } = this.range
+      if (x < offsetLeft) x = offsetLeft
+      if (y < offsetTop) y = offsetTop
+      if (x + this.pos.selfWidth > offsetLeft + clientWidth) x = offsetLeft + clientWidth - this.pos.selfWidth
+      if (y + this.pos.selfHeight > offsetTop + clientHeight) y = offsetTop + clientHeight - this.pos.selfHeight
       return { x, y }
     }
   }
@@ -90,6 +99,9 @@ export default {
 
 <style scoped>
 .player-wrapper {
-  position: absolute;
+  position: fixed;
+}
+.player-wrapper.debug {
+  border: 1px solid #e9e9e9;
 }
 </style>

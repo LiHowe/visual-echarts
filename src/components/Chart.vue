@@ -35,6 +35,16 @@ export default {
     beforeSetOption: {
       type: Function,
       default: () => {}
+    },
+    chartType: {
+      type: String,
+      default: 'bar'
+    },
+    // 默认使用Object.keys来获取data的第一个数据的key作为维度信息
+    // 但是由于Object.keys无法保证key的顺序, 所以提供了自定义维度来指定维度信息
+    dimensions: {
+      type: Array,
+      default: () => ([])
     }
   },
   data: () => ({
@@ -80,18 +90,34 @@ export default {
         dataset: {
           source: val
         }
-      })
+      }, true)
     },
     opts: {
       handler(val) {
         this.beforeSetOption(this.chartInstance, val)
         console.log('[Chart] 配置改变, 新配置为', val)
         this.chartInstance.setOption(val)
+        this.replayChart()
       },
       deep: true,
+    },
+    chartType() {
+      this.initChart()
     }
   },
   methods: {
+    replayChart () {
+      this.chartInstance.setOption({
+        dataset: {
+          source: []
+        }
+      })
+      this.chartInstance.setOption({
+        dataset: {
+          source: this.data
+        }
+      })
+    },
     preview () {
       const v = document.createElement('video')
       v.height = 200
@@ -124,25 +150,28 @@ export default {
     getStreamFromCanvas (frameRate = 30) {
       const chartCanvas = this.chartInstance.getDom().querySelector('canvas')
       return chartCanvas.captureStream(frameRate)
+    },
+    initChart() {
+      const keys = this.dimensions || Object.keys(this.data[0])
+      this.chartInstance.setOption({
+        xAxis: {
+          type: 'category',
+        },
+        yAxis: {},
+        dataset: {
+          dimensions: keys,
+          source: this.data
+        },
+        series: new Array(keys.length - 1).fill({type: this.chartType}),
+      })
     }
   },
   mounted() {
     this.chartInstance = echarts.init(this.$refs.ec)
-    const keys = Object.keys(this.data[0])
+    this.initChart()
+    this.beforeSetOption && this.beforeSetOption(this.chartInstance, this.opts)
     this.chartInstance.setOption(this.opts)
-    this.chartInstance.setOption({
-      xAxis: {
-        type: 'category',
-      },
-      yAxis: {
-        type: 'value'
-      },
-      series: new Array(keys.length - 1).fill({type: 'bar'}),
-      dataset: {
-        dimensions: keys,
-        source: this.data
-      }
-    })
+
   }
 }
 </script>
