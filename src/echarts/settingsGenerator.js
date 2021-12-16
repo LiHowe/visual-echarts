@@ -16,10 +16,14 @@ export const COMPONENT_TYPE = {
 function baseItem (config) {
   return {
     ...config,
-    hidden: () => false,
-    disabled: () => false,
-    setHidden(fn) {
-      this.hidden = fn
+    _hidden: false,
+    _disabled: false,
+    hiddenWhen(fn) {
+      this._hidden = fn
+      return this
+    },
+    disableWhen(fn) {
+      this._disabled = fn
       return this
     }
   }

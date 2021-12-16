@@ -20,6 +20,7 @@ import Player from '@/components/Player'
 import Settings from '@/components/Settings.jsx'
 import Chart from '@/components/Chart'
 import ChartPicker from '@/components/ChartPicker'
+
 import {
   getBaseTitleOptions,
   getBaseLegendOptions,
@@ -27,6 +28,7 @@ import {
   getBaseAxisOptionsX,
   getBaseOptions,
 } from '@/echarts'
+
 
 const settings = {
   title: getBaseTitleOptions(),

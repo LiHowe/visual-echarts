@@ -54,7 +54,7 @@ export default {
           config: getBaseOptions(true)
         }
       ]
-    }
+    },
   },
   watch: {
     value: {
@@ -81,8 +81,13 @@ export default {
       h('aside', {
         class: 'settings-wrapper'
       }, [
-        this.blocks.map(
-          ({ label, config, fn, target}) =>
+        ...this.blocks.map(
+          ({
+            label,
+            config,
+            fn,
+            target
+          }) =>
             h(SettingsBlock, {
               props: {
                 label,

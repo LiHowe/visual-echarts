@@ -39,9 +39,11 @@ export default {
     const c = this.config
 
     const isHidden = (data) => {
-      if (!data.hidden) return false
-      if (typeof data.hidden === 'boolean') return data.hidden
-      return data.hidden(this.obj)
+      if (data._hidden instanceof Function) {
+        return data._hidden(this.obj)
+      } else {
+        return data._hidden
+      }
     }
 
     const callFnWithCatch = (fn, ...args) => {
@@ -211,7 +213,15 @@ export default {
               Object.keys(c).map(key => {
                 const d = c[key]
                 if (d.children) {
-                  return genSub(d, key)
+                  // 如果存在触发条件
+                  if (d._hiddenWhen) {
+                    console.log('enter hidden when', this.obj)
+                    if (!d._hiddenWhen(this.obj)) {
+                      return genSub(d, key)
+                    }
+                  } else {
+                    return genSub(d, key)
+                  }
                 }
                 switch (d.component) {
                   case COMPONENT_TYPE.SELECT:

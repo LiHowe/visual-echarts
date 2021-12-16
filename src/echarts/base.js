@@ -71,7 +71,7 @@ export function getBaseOptions (detail = false) {
         })
       }
     })
-      .setHidden(opt => !opt.animationDelay),
+      .hiddenWhen(opt => !opt.animationDelay),
     _singleColorFlag: customCheckboxItem({
       label: '使用单色',
       preset: false,
