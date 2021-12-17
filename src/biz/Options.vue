@@ -5,38 +5,37 @@
       <h-panel name="text">
         <p>文本设置</p>
         <div slot="content">
-          <div>
+          <div class="panel-block">
             <p class="panel-content">
               <span class="label">显示X轴</span>
-              <h-switch class="control" v-model="value.xAxis.show"></h-switch>
+              <h-switch class="control" v-model="value.xAxis.show" size="small" />
             </p>
             <template v-if="value.xAxis.show">
               <p class="panel-content">
                 <span class="label">X轴字体</span>
-                <h-select class="control" v-model="value.xAxis.axisLabel.fontFamily">
+                <h-select class="control" v-model="value.xAxis.axisLabel.fontFamily" size="small">
                   <h-option
                     v-for="item in fontFamilies"
                     :value="item.value"
                     :key="item.value"
-                  >{{ item.label }}</h-option
-                  >
+                  >{{ item.label }}</h-option>
                 </h-select>
               </p>
               <p class="panel-content">
                 <span class="label">X轴字号</span>
-                <h-input-number :min="10" v-model="value.xAxis.axisLabel.fontSize"></h-input-number>
+                <h-input-number :min="10" v-model="value.xAxis.axisLabel.fontSize" size="small"/>
               </p>
             </template>
           </div>
-          <div>
+          <div class="panel-block">
             <p class="panel-content">
               <span class="label">显示Y轴</span>
-              <h-switch class="control" v-model="value.yAxis.show"></h-switch>
+              <h-switch class="control" v-model="value.yAxis.show" size="small"/>
             </p>
             <template v-if="value.yAxis.show">
               <p class="panel-content">
                 <span class="label">Y轴字体</span>
-                <h-select class="control" v-model="value.yAxis.axisLabel.fontFamily">
+                <h-select class="control" v-model="value.yAxis.axisLabel.fontFamily" size="small">
                   <h-option
                     v-for="item in fontFamilies"
                     :value="item.value"
@@ -47,23 +46,34 @@
               </p>
               <p class="panel-content">
                 <span class="label">Y轴字号</span>
-                <h-input-number :min="10" v-model="value.yAxis.axisLabel.fontSize" />
+                <h-input-number :min="10" v-model="value.yAxis.axisLabel.fontSize" size="small"/>
               </p>
             </template>
           </div>
-          <div>
+          <div class="panel-block">
             <p class="panel-content">
               <span class="label">显示图表标题</span>
-              <h-switch class="control" v-model="value.title.show"></h-switch>
+              <h-switch class="control" v-model="value.title.show" size="small"/>
             </p>
             <template v-if="value.title.show">
               <p class="panel-content">
                 <span class="label">图表标题</span>
-                <h-input v-model="value.title.text" />
+                <h-input class="control" v-model="value.title.text" size="small"/>
+              </p>
+              <p class="panel-content">
+                <span class="label">标题位置</span>
+                <span class="control group">
+                  <span>
+                    x: <h-input-number v-model="value.title.left" size="small" :step="1"/>
+                  </span>
+                  <span>
+                    y: <h-input-number v-model="value.title.top" size="small" :step="1"/>
+                  </span>
+                </span>
               </p>
               <p class="panel-content">
                 <span class="label">标题字体</span>
-                <h-select class="control" v-model="value.title.textStyle.fontFamily">
+                <h-select class="control" v-model="value.title.textStyle.fontFamily" size="small">
                   <h-option
                     v-for="item in fontFamilies"
                     :value="item.value"
@@ -73,47 +83,16 @@
               </p>
               <p class="panel-content">
                 <span class="label">标题字号</span>
-                <h-input-number :min="10" v-model="value.title.textStyle.fontSize" />
+                <h-input-number :min="10" v-model="value.title.textStyle.fontSize" size="small"/>
               </p>
             </template>
           </div>
-          <div>
-            <p class="panel-content">
-              <span class="label">显示单位</span>
-              <!-- FIXME: 真值有问题 -->
-              <h-switch
-                class="control"
-                :value="!!value.title.subtext"
-                :true-value="!!value.title.subtext"
-                :false-value="!value.title.subtext"
-                @on-change="changeSubTitle"
-              />
-            </p>
-            <template v-if="value.title.subtext">
-              <p class="panel-content">
-                <span class="label">改变单位</span>
-                <h-input v-model="value.title.subtext" />
-              </p>
-              <p class="panel-content">
-                <span class="label">单位字体</span>
-                <h-select class="control" v-model="value.title.subtextStyle.fontFamily">
-                  <h-option
-                    v-for="item in fontFamilies"
-                    :value="item.value"
-                    :key="item.value"
-                  >{{ item.label }}</h-option>
-                </h-select>
-              </p>
-              <p class="panel-content">
-                <span class="label">单位字号</span>
-                <h-input-number :min="10" v-model="value.title.subtextStyle.fontSize" />
-              </p>
-            </template>
-          </div>
-          <div>
+          <Subtitle v-model="value" />
+          <div class="panel-block">
             <p class="panel-content">
               <span class="label">显示图例</span>
               <h-switch
+                size="small"
                 class="control"
                 v-model="value.legend.show"
               />
@@ -121,7 +100,7 @@
             <template v-if="value.legend.show">
               <p class="panel-content">
                 <span class="label">图例字体</span>
-                <h-select class="control" v-model="value.legend.textStyle.fontFamily">
+                <h-select class="control" v-model="value.legend.textStyle.fontFamily" size="small">
                   <h-option
                     v-for="item in fontFamilies"
                     :value="item.value"
@@ -131,7 +110,7 @@
               </p>
               <p class="panel-content">
                 <span class="label">图例字号</span>
-                <h-input-number :min="10" v-model="value.legend.textStyle.fontSize" />
+                <h-input-number :min="10" v-model="value.legend.textStyle.fontSize" size="small"/>
               </p>
             </template>
           </div>
@@ -140,24 +119,25 @@
       <h-panel name="style">
         <p>颜色设置</p>
         <div slot="content">
-          <div>
+          <div class="panel-block">
             <p class="panel-content">
               <span class="label">使用单色</span>
               <h-switch
                 class="control"
                 :value="!value.color.push"
+                size="small"
                 @on-change="useSingleColor"
               />
             </p>
             <p v-if="!value.color.push" class="panel-content">
-              <span class="label">选择颜色</span>
+              <span class="label">编辑颜色</span>
               <color-picker v-model="value.color" />
             </p>
           </div>
-          <div>
+          <div class="panel-block">
             <p class="panel-content">
               <span class="label">选择主题</span>
-              <h-select v-model="value._theme">
+              <h-select v-model="value._theme" size="small">
                 <h-option v-for="(theme, i) in themes" :key="i" :value="theme.label" :label="theme.label">
                   <span>
                     <img :src="theme.value" style="width: 100%">
@@ -184,8 +164,9 @@
                 :show-upload-list="false"
                 :showErrorlist="false"
                 :before-upload="handleImageUpload"
+                size="small"
               >
-                <h-button type="ghost" icon="upload">上传图片</h-button>
+                <h-button type="ghost" icon="upload" size="small">上传图片</h-button>
               </h-upload>
             </p>
           </div>
@@ -193,6 +174,43 @@
       </h-panel>
       <h-panel name="animation">
         <p>动画设置</p>
+        <div slot="content">
+          <div class="panel-block">
+            <p class="panel-content">
+              <span class="label">动画时长</span>
+              <h-input-number v-model="value.animationDuration" :step="200" size="small">
+                <span slot="append">ms</span>
+              </h-input-number>
+            </p>
+          </div>
+        </div>
+      </h-panel>
+      <h-panel name="data">
+        <p>数据设置</p>
+        <div slot="content">
+          <div class="panel-block">
+            <p class="panel-content">
+              <span class="label">转换为百分数</span>
+              <h-switch
+                class="control"
+                v-model="value._pct"
+                size="small"
+                @on-change="changeFormatter"
+              />
+            </p>
+          </div>
+          <div class="panel-block">
+            <p class="panel-content">
+              <span class="label">显示千分位</span>
+              <h-switch
+                class="control"
+                v-model="value._thous"
+                size="small"
+                @on-change="changeFormatter"
+              />
+            </p>
+          </div>
+        </div>
       </h-panel>
     </h-collapse>
   </div>
@@ -200,12 +218,19 @@
 
 <script>
 import ColorPicker from '@/components/ColorPicker'
+import Subtitle from '@/biz/components/Subtitle'
+
 export default {
   name: 'Options',
-  components: { ColorPicker },
+  components: { Subtitle, ColorPicker },
   props: {
     // 图标选项
     value: {
+      type: Object,
+      default: () => ({}),
+      required: true
+    },
+    chart: {
       type: Object,
       default: () => ({}),
       required: true
@@ -235,11 +260,17 @@ export default {
     ],
     globalColor: '#000'
   }),
-  methods: {
-    changeSubTitle (val) {
-      console.log('changeSubTitle', val)
-      this.value.title.subtext = !val ? '' : '单位'
+  computed: {
+    chartOption() {
+      if (!this.chart || !this.chart.getOption) return null
+      return this.chart.getOption()
     },
+    graphic () {
+      if (!this.chartOption) return null
+      return (id) => this.chartOption.graphic.find(item => item.id === id)
+    }
+  },
+  methods: {
     useSingleColor (flag) {
       let temp = this.value._color
       if (temp) {
@@ -275,31 +306,33 @@ export default {
       reader.readAsDataURL(files)
       reader.onloadend = () => {
         console.log('读取完毕')
-        this.value.graphic = [{
-          type: 'image',
-          id: 'bg',
-          x: 0,
-          y: 0,
-          bounding: 'all',
-          style: {
-            image: reader.result,
-            x: 0,
-            y: 0,
+        this.value.graphic.forEach(g => {
+          if (g.id === 'bg') {
+            g.style.image = reader.result
           }
-        }]
+        })
       }
+    },
+    changeFormatter (pct, thous) {
+      pct && (this.value._pct = pct)
+      thous && (this.value._thous = thous)
+      const formatter = (val) => {
+        let res = val
+        if (this.value._pct) {
+          res = res * 100
+        }
+        if (this.value._thous) {
+          res = res.toLocaleString('en-us')
+        }
+
+        return res + (this.value._pct ? '%' : '')
+      }
+      this.value.yAxis.axisLabel.formatter = formatter
     }
   }
 }
 </script>
 
 <style scoped>
-.panel-content {
-  display: grid;
-  grid-template-columns: 35% auto;
-  align-content: space-between;
-}
-.panel-content .control {
-  justify-self: end;
-}
+
 </style>

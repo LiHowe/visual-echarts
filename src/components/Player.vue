@@ -57,7 +57,6 @@ export default {
   },
   watch: {
     stream(val) {
-      console.log('Stream changed', val)
       this.$refs.video.srcObject = val
     }
   },
@@ -74,7 +73,6 @@ export default {
     move (e) {
       if (!this.isMoving) return
       const { clientX, clientY } = e
-      console.log('move', e, { clientX, clientY })
       this.pos.x = clientX - this.pos.selfWidth / 2
       this.pos.y = clientY - this.pos.selfHeight / 2
 

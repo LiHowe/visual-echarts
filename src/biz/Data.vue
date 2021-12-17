@@ -1,12 +1,30 @@
 <template>
   <div class="data-wrapper">
-    <div ref="table"></div>
+    <div class="panel-block data-settings">
+      <p class="panel-content">
+        <span class="label">首行作为表头</span>
+        <h-switch class="control" v-model="settings.firstRowAsHeader" size="small" />
+      </p>
+      <p class="panel-content">
+        <span class="label">显示百分数</span>
+        <h-switch class="control" v-model="settings.asPercent" size="small"/>
+      </p>
+      <p class="panel-content">
+        <span class="label">保留小数位数</span>
+        <h-input-number class="control" v-model="settings.decimal" size="small"/>
+      </p>
+    </div>
+    <hot-table :data="clonedData" :settings="tableSettings" />
   </div>
 </template>
 
 <script>
-import Handsontable from 'handsontable'
+import { HotTable } from '@handsontable/vue'
+import { registerAllModules } from 'handsontable/registry'
 import 'handsontable/dist/handsontable.full.css'
+
+registerAllModules()
+
 export default {
   name: 'Data',
   props: {
@@ -16,8 +34,17 @@ export default {
       required: true
     }
   },
+  components: {
+    HotTable
+  },
   data: () => ({
-    clonedData: []
+    clonedData: [],
+    settings: {
+      firstRowAsHeader: false,
+      asPercent: false,
+      decimal: 2
+    },
+    tableSettings: {}
   }),
   watch: {
     value: {
@@ -29,26 +56,18 @@ export default {
     }
   },
   mounted() {
-    this.initTable()
+  },
+  created() {
+    this.tableSettings = {
+      data: this.clonedData,
+      rowHeaders: true,
+      colHeaders: true,
+      licenseKey: 'non-commercial-and-evaluation',
+      minRows: 15,
+      minCols: 8
+    }
   },
   methods: {
-    initTable () {
-      const t = new Handsontable(this.$refs.table, {
-        data: this.clonedData,
-        rowHeaders: true,
-        colHeaders: true,
-        licenseKey: 'non-commercial-and-evaluation'
-      })
-      t.addHook('beforeChange', (changes, source) => {
-        console.log('beforeChange', changes, source)
-        changes[0][3] = Number(changes[0][3])
-      })
-      t.addHook('afterChange', (changes) => {
-        console.log('sheet changed', changes)
-        this.clonedData = t.getSourceData()
-        this.handleDataChange()
-      })
-    },
     handleDataChange () {
       console.log('Data emit change:', this.clonedData)
       this.$emit('change', this.clonedData)
@@ -59,6 +78,10 @@ export default {
 
 <style scoped >
 .data-wrapper {
-
+  width: 100%;
+  height: 100%;
+}
+.data-settings {
+  margin-bottom: 10px;
 }
 </style>

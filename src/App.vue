@@ -3,8 +3,9 @@
     <chart-picker @changeType="t => this.chartType = t" />
     <div class="page-content" ref="content">
       <Chart
+        ref="chart"
         :dimensions="['product', '2015', '2016', '2017']"
-        :opts="settings"
+        :opts.sync="settings"
         :data="mockedData"
         :chart-type="chartType"
         :before-set-option="grabFrame"
@@ -14,6 +15,7 @@
     <Settings
       :data="mockedData"
       :opt="settings"
+      :chart="$refs.chart"
       @dataChanged="d => this.mockedData = d"
       @optionChanged="opt => this.settings = opt"
     />
@@ -39,18 +41,15 @@ const globalLabelColor = '#000'
 
 const settings = {
   title: {
+    show: true,
     text: '标题',
+    left: 0,
+    top: 0,
     textStyle: {
       fontFamily: 'sans-serif',
       fontSize: 18,
       color: globalLabelColor
     },
-    subtext: '单位',
-    subtextStyle: {
-      fontFamily: 'sans-serif',
-      fontSize: 12,
-      color: globalLabelColor
-    }
   },
   legend: {
     show: true,
@@ -65,7 +64,8 @@ const settings = {
     axisLabel: {
       fontFamily: 'sans-serif',
       fontSize: 12,
-      color: globalLabelColor
+      color: globalLabelColor,
+      formatter: val => val
     }
   },
   yAxis: {
@@ -73,32 +73,54 @@ const settings = {
     axisLabel: {
       fontFamily: 'sans-serif',
       fontSize: 12,
-      color: globalLabelColor
+      color: globalLabelColor,
+      formatter: val => val
     }
   },
   color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],
   _theme: 'theme1',
   backgroundColor: 'transparent',
-  graphic: [{
-    type: 'image',
-    id: 'bg',
-    left: 'center',
-    x: 0,
-    y: 0,
-    bounding: 'all',
-    style: {
-      image: '',
+  graphic: [
+    {
+      type: 'image',
+      id: 'bg',
+      left: 'center',
       x: 0,
       y: 0,
+      bounding: 'all',
+      silent: true,
+      invisible: false,
+      style: {
+        image: '',
+        x: 0,
+        y: 0,
+      }
+    },
+    {
+      type: 'text',
+      id: 'subtitle',
+      x: 5,
+      y: 30,
+      silent: true,
+      invisible: false,
+      style: {
+        text: '单位',
+        x: 0,
+        y: 0,
+        font: '15px sans-serif'
+      }
     }
-  }]
+  ],
+  animationDuration: 1000,
+  animationDelay: idx => idx * 300
 }
 
 const mockedData = [
-  { product: 'Matcha Latte', '2015': 43.3, '2016': 85.8, '2017': 93.7 },
-  { product: 'Milk Tea', '2015': 83.1, '2016': 73.4, '2017': 55.1 },
-  { product: 'Cheese Cocoa', '2015': 86.4, '2016': 65.2, '2017': 82.5 },
-  { product: 'Walnut Brownie', '2015': 72.4, '2016': 53.9, '2017': 39.1 }
+  ['product', '2015', '2016', '2017'],
+  ['Matcha Latte', 43.3, 85.8, 93.7],
+  ['Milk Tea', 83.1, 73.4, 55.1],
+  ['Cheese Cocoa', 86.4, 65.2, 82.5],
+  ['Walnut Brownie', 72.4, 53.9, 39.1]
 ]
 
 export default {

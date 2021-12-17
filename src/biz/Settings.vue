@@ -5,8 +5,8 @@
       <h-tab-pane label="数据编辑" name="data" />
     </h-tabs>
     <div class="settings-wrapper__content">
-      <DataEdit v-if="isData" :value="data" @change="handleDataChange" />
-      <Options v-else :value="opt" @change="handleOptionsChange"/>
+      <DataEdit v-if="isData" :value="data" :chart="chart" @change="handleDataChange" />
+      <Options v-else :value="opt" :chart="chart" @change="handleOptionsChange"/>
     </div>
   </div>
 </template>
@@ -28,6 +28,11 @@ export default {
     data: {
       type: Array,
       default: () => ([])
+    },
+    // echarts实例, 为了多图表控制
+    chart: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({
@@ -56,6 +61,34 @@ export default {
 }
 .settings-wrapper__content {
   width: 100%;
-  height: 100%;
+  min-height: 50%;
+  overflow: auto;
+}
+/deep/.panel-block + .panel-block {
+  margin-top: 10px;
+}
+/deep/.panel-content {
+  display: grid;
+  grid-template-columns: 80px auto;
+  align-content: space-between;
+  align-items: center;
+  line-height: 2;
+}
+/deep/.panel-content + .panel-content {
+  margin-top: 5px;
+}
+/deep/.panel-content .label {
+  font-weight: bold;
+}
+/deep/.control.group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-column-gap: 10px;
+}
+/deep/.panel-content .h-input-number {
+  width: 100%;
+}
+/deep/.panel-content .control {
+  justify-self: end;
 }
 </style>

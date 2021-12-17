@@ -16,6 +16,7 @@ export default {
       type: Object,
       default: () => ({})
     },
+    // 使用dataset, 并且使用数组对象的形式
     data: {
       type: Array,
       default: () => []
@@ -99,7 +100,7 @@ export default {
         this.chartInstance.setOption(val)
         this.replayChart()
       },
-      deep: true,
+      deep: true
     },
     chartType() {
       this.initChart()
@@ -152,17 +153,16 @@ export default {
       return chartCanvas.captureStream(frameRate)
     },
     initChart() {
-      const keys = this.dimensions || Object.keys(this.data[0])
+      // const keys = this.dimensions || this.data[0]
       this.chartInstance.setOption({
         xAxis: {
           type: 'category',
         },
         yAxis: {},
         dataset: {
-          dimensions: keys,
           source: this.data
         },
-        series: new Array(keys.length - 1).fill({type: this.chartType}),
+        series: new Array(this.data[0].length - 1).fill({type: this.chartType}),
       })
     }
   },
