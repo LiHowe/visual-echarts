@@ -1,11 +1,13 @@
 <template>
   <div class="app-container">
-    <Settings v-model="settings" class="aside-settings" />
-    <div class="page-content">
-      <tool-bar :config="chartConfig" @changeConfig="({k, v}) => chartConfig[k] = v"/>
-      <Chart :data="mockedData" :opts="settings" :config="chartConfig"/>
-      <data-sheet :model-value="mockedData" @dataChange="changeData" />
+    <div CLASS="page-content">
+      <div class="chart-content">
+        <tool-bar :config="chartConfig" @changeConfig="({k, v}) => chartConfig[k] = v"/>
+        <Chart :data="mockedData" :opts="settings" :config="chartConfig"/>
+      </div>
+      <data-sheet class="data-content" :model-value="mockedData" @dataChange="changeData" />
     </div>
+    <Settings v-model="settings" class="aside-settings" />
   </div>
 </template>
 <script setup>
@@ -28,29 +30,46 @@ const settings = reactive({
   title: getBaseTitleOptions(),
   legend: getBaseLegendOptions(),
   xAxis: getBaseAxisOptionsX(),
-  yAxis: getBaseAxisOptionsY()
+  yAxis: getBaseAxisOptionsY(),
+  animationDelay: idx => idx * 500,
+  animationDuration: 2000
 })
 const mockedData = ref([
   {
-    year: '2010',
+    year: '20岁',
     q1: 100,
-    q2: 200,
+    q2: 300,
     q3: 150,
-    q4: 300
   },
   {
-    year: '2011',
-    q1: 120,
-    q2: 230,
-    q3: 180,
-    q4: 350
+    year: '35岁',
+    q1: 420,
+    q2: 530,
+    q3: 680,
   },
   {
-    year: '2012',
-    q1: 200,
-    q2: 140,
-    q3: 350,
-    q4: 500
+    year: '40岁',
+    q1: 420,
+    q2: 840,
+    q3: 850,
+  },
+  {
+    year: '50岁',
+    q1: 420,
+    q2: 1640,
+    q3: 1650,
+  },
+  {
+    year: '60岁',
+    q1: 420,
+    q2: 2440,
+    q3: 2450,
+  },
+  {
+    year: '80岁',
+    q1: 420,
+    q2: 3350,
+    q3: 3350,
   }
 ])
 
@@ -73,11 +92,12 @@ body {
 </style>
 <style scoped>
 .app-container {
+  --sider-width: 300px;
   width: 100vw;
   height: 100vh;
   display: grid;
   overflow: hidden;
-  grid-template-columns: 250px auto;
+  grid-template-columns: auto var(--sider-width);
 }
 .aside-settings {
   width: 100%;
@@ -91,10 +111,19 @@ body {
   overflow: hidden auto;
   box-sizing: border-box;
 }
+.chart-content {
+  width: 100%;
+  overflow: hidden;
+}
+.data-content {
+  max-width: calc(100vw - var(--sider-width));
+  height: 300px;
+}
 .page-content {
+  --data-width: 300px;
   width: 100%;
   height: 100vh;
   display: grid;
-  grid-template-rows: 30px auto 30%;
+  grid-template-rows: calc(100% - var(--data-width)) var(--data-width);
 }
 </style>

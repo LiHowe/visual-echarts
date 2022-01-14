@@ -33,3 +33,29 @@ export function simplifyOptions (options) {
   }, {})
 }
 
+/**
+ * @since 2021/1/13
+ * @author zihao.he
+ * @param ec Echart Instance
+ * @param target The series idx and bar idx
+ */
+export function getSeriesPosition(ec, target = [0, 0]) {
+  const zr = ec.getZr()
+  const shapes = zr.storage.getRoots()
+  const seriesShapes = shapes
+    .filter(shape => shape.__ecComponentInfo.mainType === 'series')
+    // make sure the series data is sequential.
+    .sort((a, b) =>
+      a.__ecComponentInfo.index - b.__ecComponentInfo.index
+    )
+  const [seriesIdx, groupIdx] = target
+  const bar = seriesShapes[seriesIdx].childAt(groupIdx)
+  const info = bar.getBoundingRect()
+  console.log({
+    bar, info
+  })
+  return {
+    x: info.x + info.width / 2,
+    y: info.y
+  }
+}
